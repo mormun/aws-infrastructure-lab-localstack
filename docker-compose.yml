@@ -1,0 +1,11 @@
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"            # Puerto API de AWS
+      - "8080:8080"            # Puerto Jenkins
+    environment:
+      - SERVICES=ec2,s3,iam,sts    # Servicios utilizados
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
