@@ -57,3 +57,27 @@ Para eliminar todos los recursos creados y evitar el consumo de memoria local:
  ```bash
 terraform destroy --auto-approve
 docker-compose down
+```
+## 🔍 Verificación y Troubleshooting 
+
+Para asegurar que cada componente se ha desplegado correctamente y se comporta como en un entorno real de AWS, sigue estos pasos de verificación:
+
+### 1. Networking: Validación de la VPC y Subred
+Comprobamos que la red existe y que la segmentación de IP es la correcta.
+* **Comando:**
+  ```bash
+  awslocal ec2 describe-vpcs --query "Vpcs[*].{ID:VpcId,CIDR:CidrBlock}" --output table
+  ```
+  <img width="338" height="137" alt="image" src="https://github.com/user-attachments/assets/13532011-70bd-402f-b071-b7c58f83a11f" />
+
+```bash
+awslocal s3 ls s3://jenkins-persistence-bucket/
+```
+<img width="378" height="20" alt="image" src="https://github.com/user-attachments/assets/caeba727-df27-4c91-bf39-9fce66aa94b2" />
+
+```bash
+awslocal ec2 describe-instances --query "Reservations[*].Instances[*].{ID:InstanceId,Status:State.Name,IP:PrivateIpAddress,SG:SecurityGroups[0].GroupName}" --output table
+```
+<img width="307" height="102" alt="image" src="https://github.com/user-attachments/assets/c36111e3-310a-4196-a89f-38d54a450a96" />
+
+
