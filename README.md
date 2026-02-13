@@ -6,6 +6,8 @@ Este repositorio contiene un laboratorio práctico de **Infraestructura como Có
 
 La arquitectura despliega una red virtual aislada (VPC) con segmentación de subredes, reglas de firewall mediante Security Groups y almacenamiento persistente en S3. Todo el entorno se ejecuta localmente dentro de contenedores Docker, garantizando un entorno de desarrollo rápido, gratuito e independiente.
 
+<img width="857" height="555" alt="Project_LocalStack_Terraform_AWS" src="https://github.com/user-attachments/assets/6c2649d8-06ff-49d4-853b-e33ff24ca06c" />
+
 ## 🛠️ Tecnologías Utilizadas
 
 * **Terraform**: Orquestación de infraestructura.
