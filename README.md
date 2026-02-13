@@ -1,2 +1,57 @@
-# aws-infrastructure-lab-localstack
-Laboratorio de DevOps para el despliegue de una arquitectura de red AWS (VPC, S3, EC2) utilizando Terraform y LocalStack. 
+# AWS Infrastructure Lab with Terraform & LocalStack
+
+Este repositorio contiene un laboratorio práctico de **Infraestructura como Código (IaC)** que simula un entorno de red de AWS utilizando **Terraform** y **LocalStack**. El objetivo es desplegar una arquitectura base segura y persistente para un servidor de automatización (Jenkins) sin incurrir en costes de nube real.
+
+## 🚀 Descripción del Proyecto
+
+La arquitectura despliega una red virtual aislada (VPC) con segmentación de subredes, reglas de firewall mediante Security Groups y almacenamiento persistente en S3. Todo el entorno se ejecuta localmente dentro de contenedores Docker, garantizando un entorno de desarrollo rápido, gratuito e independiente.
+
+## 🛠️ Tecnologías Utilizadas
+
+* **Terraform**: Orquestación de infraestructura.
+* **LocalStack**: Emulación de servicios de AWS (EC2, S3, IAM, VPC).
+* **Docker & Docker Compose**: Contenerización del entorno de simulación.
+* **AWS CLI / awslocal**: Interacción con la infraestructura desplegada.
+
+## 🏗️ Arquitectura Desplegada
+
+* **Networking**: VPC (`10.0.0.0/16`) con una Subred Pública (`10.0.1.0/24`) e Internet Gateway.
+* **Seguridad**: Security Group con acceso restringido al puerto `8080` para tráfico entrante.
+* **Cómputo**: Instancia EC2 simulada dentro de la subred pública.
+* **Almacenamiento**: Bucket S3 configurado para la persistencia de datos de la aplicación.
+
+## 🧠 Retos Técnicos y Soluciones
+
+Durante el desarrollo de este laboratorio, se identificaron y resolvieron los siguientes desafíos técnicos propios de la emulación local:
+
+1. **Error de Comunicación S3 (HEAD / 500)**: Terraform intentaba validar el bucket mediante subdominios DNS. 
+   * **Solución**: Se forzó el uso de `s3_use_path_style = true` en el proveedor para que las peticiones apunten correctamente a la estructura de rutas de LocalStack (`localhost:4566/bucket`).
+2. **Mapeo de Puertos en Docker**: El puerto 8080 de la instancia simulada no era accesible desde el host.
+   * **Solución**: Se ajustó la configuración de `docker-compose.yml` para exponer los puertos necesarios y permitir el acceso local a los servicios.
+3. **Persistencia Efímera**: Los datos se perdían al reiniciar el contenedor.
+   * **Solución**: Se implementó una lógica de almacenamiento en S3 para simular backups de configuración.
+
+## 💻 Cómo Ejecutar el Laboratorio
+
+### Requisitos Previos
+* Docker & Docker Compose instalados.
+* Terraform
+* Python/Pip para instalar `awscli-local`.
+
+### Pasos
+1. **Levantar LocalStack**:
+   ```bash
+   docker-compose up -d
+   terraform init
+   terraform apply --auto-approve
+
+2. **Verificar Recursos**:
+   ```bash
+   awslocal s3 ls
+   awslocal ec2 describe-instances --output table
+   
+3. **Limpieza**
+Para eliminar todos los recursos creados y evitar el consumo de memoria local:
+ ```bash
+terraform destroy --auto-approve
+docker-compose down
